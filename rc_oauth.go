@@ -23,7 +23,7 @@ import (
 
 var (
 	RCOauthConfig = &oauth2.Config{
-		RedirectURL:    "urn:ietf:wg:oauth:2.0:oob",
+		RedirectURL:    "http://localhost:3000/RCCallback",
 		ClientID:     os.Getenv("ClientID"),
 		ClientSecret: os.Getenv("ClientSecret"),
 		Scopes:       []string{"public"},
@@ -32,7 +32,7 @@ var (
 			TokenURL: "https://recurse.com/oauth/token",
 		},
 	}
-	oauthStateString = getRandString(10)
+	oauthStateString = getStateString(10)
 )
 
 func GetUrl() string {
@@ -40,11 +40,20 @@ func GetUrl() string {
 	return url
 }
 
-//func GetToken() string {	
-//}
+func IsStateString(state string) bool {
+	return state == oauthStateString
+}
+
+func GetToken(code string) *oauth2.Token {
+	token, err := RCOauthConfig.Exchange(oauth2.NoContext, code)
+	if err != nil {
+		panic(token)
+	}
+	return token
+}
 
 
-func getRandString(n int) string {
+func getStateString(n int) string {
 	var chars = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	randString := make([]rune, n)
 	for i := range randString {
