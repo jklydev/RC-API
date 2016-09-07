@@ -3,6 +3,10 @@ package RC_Oauth
 import (
 	"golang.org/x/oauth2"
 	"math/rand"
+	"net/http"
+	//	"encoding/json"
+	"io/ioutil"
+	"log"
 )
 
 ///////////////////////////////////////////////////////
@@ -64,6 +68,21 @@ func IsStateString(state string) bool {
 // Recurser
 ///////////////////////////////////////////////////////
 
+func GetMe() string {
+	token := RCOauthToken.AccessToken
+	url := "https://www.recurse.com/api/v1/people/me?access_token=" + token
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	bodyS := string(body)
+	return bodyS
+}
 
 
 ///////////////////////////////////////////////////////
