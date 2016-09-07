@@ -98,6 +98,52 @@ func GetRecurser(id string) string {
 // Batch
 ///////////////////////////////////////////////////////
 
-//func GetBatchList() string {
-//	/api/v1/batches
-//}
+var batchUrl = baseUrl + "batches/"
+
+func GetBatchList() string {
+	token := RCOauthToken.AccessToken
+	url :=  batchUrl + "?access_token=" + token
+		resp, err := http.Get(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	bodyS := string(body)
+	return bodyS
+}
+
+func GetBatch(id string) string {
+	token := RCOauthToken.AccessToken
+	url := batchUrl + id + "?access_token=" + token
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	bodyS := string(body)
+	return bodyS
+}
+
+func GetBatchMembers(id string) string {
+	token := RCOauthToken.AccessToken
+	url := batchUrl + id + "/people" + "?access_token=" + token
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	bodyS := string(body)
+	return bodyS
+}
