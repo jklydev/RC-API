@@ -18,22 +18,26 @@ Batch API:
 import (
 	"golang.org/x/oauth2"
 	"math/rand"
-	"os"
 )
 
-var (
+var	oauthStateString = getStateString(10)
+
+var RCOauthConfig *oauth2.Config;
+
+func MakeConfig(url, id, secret string) {
 	RCOauthConfig = &oauth2.Config{
-		RedirectURL:    "http://localhost:3000/RCCallback",
-		ClientID:     os.Getenv("ClientID"),
-		ClientSecret: os.Getenv("ClientSecret"),
+		RedirectURL:   url,
+		ClientID:     id,
+		ClientSecret: secret,
 		Scopes:       []string{"public"},
 		Endpoint:     oauth2.Endpoint{
 			AuthURL:  "https://recurse.com/oauth/authorize",
 			TokenURL: "https://recurse.com/oauth/token",
 		},
 	}
-	oauthStateString = getStateString(10)
-)
+	
+}
+
 
 func GetUrl() string {
 	url := RCOauthConfig.AuthCodeURL(oauthStateString)
