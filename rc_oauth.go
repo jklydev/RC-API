@@ -4,7 +4,6 @@ import (
 	"golang.org/x/oauth2"
 	"math/rand"
 	"net/http"
-	//	"encoding/json"
 	"io/ioutil"
 	"log"
 )
@@ -62,6 +61,7 @@ func getStateString(n int) string {
 func IsStateString(state string) bool {
 	return state == oauthStateString
 }
+
 
 ///////////////////////////////////////////////////////
 // Request Utilities
