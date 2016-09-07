@@ -19,8 +19,6 @@ var RCOauthConfig *oauth2.Config;
 
 var RCOauthToken *oauth2.Token;
 
-var baseUrl = "https://www.recurse.com/api/v1/"
-
 func MakeConfig(url, id, secret string) {
 	RCOauthConfig = &oauth2.Config{
 		RedirectURL:   url,
@@ -65,6 +63,32 @@ func IsStateString(state string) bool {
 	return state == oauthStateString
 }
 
+///////////////////////////////////////////////////////
+// Request Utilities
+///////////////////////////////////////////////////////
+
+var baseUrl = "https://www.recurse.com/api/v1/"
+
+func getAccessToken() string {
+	token := RCOauthToken.AccessToken
+	param := "?access_token=" + token
+	return param
+}
+
+func makeRequest(url string) string {
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	bodyS := string(body)
+	return bodyS
+}
+
 
 ///////////////////////////////////////////////////////
 // Recurser
@@ -78,19 +102,9 @@ func GetMe() string {
 }
 
 func GetRecurser(id string) string {
-	token := RCOauthToken.AccessToken
-	url :=  recurserUrl + id + "?access_token=" + token
-	resp, err := http.Get(url)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-	bodyS := string(body)
-	return bodyS
+	url :=  recurserUrl + id + getAccessToken()
+	res := makeRequest(url)
+	return res
 }
 
 
@@ -101,49 +115,19 @@ func GetRecurser(id string) string {
 var batchUrl = baseUrl + "batches/"
 
 func GetBatchList() string {
-	token := RCOauthToken.AccessToken
-	url :=  batchUrl + "?access_token=" + token
-		resp, err := http.Get(url)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-	bodyS := string(body)
-	return bodyS
+	url :=  batchUrl + "?access_token=" + getAccessToken()
+	res := makeRequest(url)
+	return res
 }
 
 func GetBatch(id string) string {
-	token := RCOauthToken.AccessToken
-	url := batchUrl + id + "?access_token=" + token
-	resp, err := http.Get(url)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-	bodyS := string(body)
-	return bodyS
+	url := batchUrl + id + "?access_token=" + getAccessToken()
+	res := makeRequest(url)
+	return res
 }
 
 func GetBatchMembers(id string) string {
-	token := RCOauthToken.AccessToken
-	url := batchUrl + id + "/people" + "?access_token=" + token
-	resp, err := http.Get(url)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-	bodyS := string(body)
-	return bodyS
+	url := batchUrl + id + "/people" + "?access_token=" + getAccessToken()
+	res := makeRequest(url)
+	return res
 }
