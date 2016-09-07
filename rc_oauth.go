@@ -18,6 +18,7 @@ var RCOauthConfig *oauth2.Config;
 
 var RCOauthToken *oauth2.Token;
 
+// Takes the applications details and generates the Config object
 func MakeConfig(url, id, secret string) {
 	RCOauthConfig = &oauth2.Config{
 		RedirectURL:   url,
@@ -32,15 +33,18 @@ func MakeConfig(url, id, secret string) {
 	
 }
 
+// Generates the URL on which use user can give consent for the app to use their RC data
 func GetUrl() string {
 	url := RCOauthConfig.AuthCodeURL(oauthStateString)
 	return url
 }
 
+// Sets the token for use internally
 func SetToken(code string) {
 	RCOauthToken = GetToken(code)
 }
 
+// Gives you the Token Object to the user
 func GetToken(code string) *oauth2.Token {
 	token, err := RCOauthConfig.Exchange(oauth2.NoContext, code)
 	if err != nil {
@@ -49,6 +53,7 @@ func GetToken(code string) *oauth2.Token {
 	return token
 }
 
+// Generates a random 20 char string, as per the protocol
 func getStateString(n int) string {
 	var chars = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	randString := make([]rune, n)
@@ -58,10 +63,12 @@ func getStateString(n int) string {
 	return string(randString)
 }
 
+// Checks if the state string passed back matches the one the user sent
 func IsStateString(state string) bool {
 	return state == oauthStateString
 }
 
+// Checks that the token is non-nil and has not expired
 func IsTokenValid() bool {
 	return RCOauthToken.Valid()
 }
@@ -73,12 +80,15 @@ func IsTokenValid() bool {
 
 var baseUrl = "https://www.recurse.com/api/v1/"
 
+// Generates the access token param to append to the end of a url
 func getAccessToken() string {
 	token := RCOauthToken.AccessToken
 	param := "?access_token=" + token
 	return param
 }
 
+// Makes a request and returns the result
+// Should probably be JSON instead of a string
 func makeRequest(url string) string {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -100,11 +110,14 @@ func makeRequest(url string) string {
 
 var recurserUrl = baseUrl +  "people/"
 
+// Get the details of the current Recurser
 func GetMe() string {
 	me := GetRecurser("me")
 	return me
 }
 
+// Get any given Recurser
+// Takes ether a user ID or an email
 func GetRecurser(id string) string {
 	url :=  recurserUrl + id + getAccessToken()
 	res := makeRequest(url)
@@ -118,18 +131,23 @@ func GetRecurser(id string) string {
 
 var batchUrl = baseUrl + "batches/"
 
+// Returns a list of every batch
 func GetBatchList() string {
 	url :=  batchUrl + getAccessToken()
 	res := makeRequest(url)
 	return res
 }
 
+// Returns a particular batch
+// Takes a batch ID
 func GetBatch(id string) string {
 	url := batchUrl + id + getAccessToken()
 	res := makeRequest(url)
 	return res
 }
 
+// Returns the details of every member of a batch
+// Takes a batch ID
 func GetBatchMembers(id string) string {
 	url := batchUrl + id + "/people" + getAccessToken()
 	res := makeRequest(url)
