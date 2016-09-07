@@ -69,8 +69,13 @@ func IsStateString(state string) bool {
 ///////////////////////////////////////////////////////
 
 func GetMe() string {
+	me := GetRecurser("me")
+	return me
+}
+
+func GetRecurser(id string) string {
 	token := RCOauthToken.AccessToken
-	url := "https://www.recurse.com/api/v1/people/me?access_token=" + token
+	url := "https://www.recurse.com/api/v1/people/" + id + "?access_token=" + token
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
