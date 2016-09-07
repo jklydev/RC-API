@@ -62,6 +62,10 @@ func IsStateString(state string) bool {
 	return state == oauthStateString
 }
 
+func IsTokenValid() bool {
+	return RCOauthToken.Valid()
+}
+
 
 ///////////////////////////////////////////////////////
 // Request Utilities
@@ -115,19 +119,19 @@ func GetRecurser(id string) string {
 var batchUrl = baseUrl + "batches/"
 
 func GetBatchList() string {
-	url :=  batchUrl + "?access_token=" + getAccessToken()
+	url :=  batchUrl + getAccessToken()
 	res := makeRequest(url)
 	return res
 }
 
 func GetBatch(id string) string {
-	url := batchUrl + id + "?access_token=" + getAccessToken()
+	url := batchUrl + id + getAccessToken()
 	res := makeRequest(url)
 	return res
 }
 
 func GetBatchMembers(id string) string {
-	url := batchUrl + id + "/people" + "?access_token=" + getAccessToken()
+	url := batchUrl + id + "/people" + getAccessToken()
 	res := makeRequest(url)
 	return res
 }
