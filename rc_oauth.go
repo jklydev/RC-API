@@ -19,6 +19,8 @@ var RCOauthConfig *oauth2.Config;
 
 var RCOauthToken *oauth2.Token;
 
+var baseUrl = "https://www.recurse.com/api/v1/"
+
 func MakeConfig(url, id, secret string) {
 	RCOauthConfig = &oauth2.Config{
 		RedirectURL:   url,
@@ -68,6 +70,8 @@ func IsStateString(state string) bool {
 // Recurser
 ///////////////////////////////////////////////////////
 
+var recurserUrl = baseUrl +  "people/"
+
 func GetMe() string {
 	me := GetRecurser("me")
 	return me
@@ -75,7 +79,7 @@ func GetMe() string {
 
 func GetRecurser(id string) string {
 	token := RCOauthToken.AccessToken
-	url := "https://www.recurse.com/api/v1/people/" + id + "?access_token=" + token
+	url :=  recurserUrl + id + "?access_token=" + token
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
@@ -93,3 +97,7 @@ func GetRecurser(id string) string {
 ///////////////////////////////////////////////////////
 // Batch
 ///////////////////////////////////////////////////////
+
+//func GetBatchList() string {
+//	/api/v1/batches
+//}
