@@ -39,18 +39,23 @@ func GetUrl() string {
 	return url
 }
 
-// Sets the token for use internally
+// Set the token for use internally
 func SetToken(code string) {
-	RCOauthToken = GetToken(code)
-}
-
-// Gives you the Token Object to the user
-func GetToken(code string) *oauth2.Token {
 	token, err := RCOauthConfig.Exchange(oauth2.NoContext, code)
 	if err != nil {
 		panic(token)
 	}
-	return token
+	RCOauthToken = token
+}
+
+// Returns Token object for use in the app
+func GetToken() *oauth2.Token {
+	return RCOauthToken
+}
+
+// Returns access token string for use in the app
+func GetAccessToken() string {
+	return RCOauthToken.AccessToken
 }
 
 // Generates a random 20 char string, as per the protocol
