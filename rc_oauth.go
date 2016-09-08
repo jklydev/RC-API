@@ -19,6 +19,8 @@ var RCOauthConfig *oauth2.Config;
 
 var RCOauthToken *oauth2.Token;
 
+var postAuthRedirect = "/";
+
 // Takes the applications details and generates the Config object
 func MakeConfig(url, id, secret string) {
 	RCOauthConfig = &oauth2.Config{
@@ -93,7 +95,12 @@ func HandleRedirect(w http.ResponseWriter, r *http.Request) {
         http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
         return
 	}
-	http.Redirect(w, r, "/me", http.StatusTemporaryRedirect)
+	url := postAuthRedirect
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+}
+
+func SetPostAuthRedirect (url string) {
+	postAuthRedirect = url
 }
 
 
