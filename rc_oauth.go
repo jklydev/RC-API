@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"io/ioutil"
 	"log"
-	"fmt"
 )
 
 ///////////////////////////////////////////////////////
@@ -81,17 +80,18 @@ func IsTokenValid() bool {
 	return RCOauthToken.Valid()
 }
 
+// A default function to handle the auth redirect and set the token
 func HandleRedirect(w http.ResponseWriter, r *http.Request) {
 	state := r.FormValue("state")
     if ! IsStateString(state) {
-        fmt.Printf("invalid oauth state")
+        log.Fatal("invalid oauth state")
         http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
         return
 	}
 	code := r.FormValue("code")
 	SetToken(code)
 	if ! IsTokenValid() {
-		fmt.Printf("invalid token")
+		log.Fatal("invalid token")
         http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
         return
 	}
@@ -99,6 +99,8 @@ func HandleRedirect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
+// Set the url you want the user redirected to after HandleRedirect
+// Default is "/"
 func SetPostAuthRedirect (url string) {
 	postAuthRedirect = url
 }
