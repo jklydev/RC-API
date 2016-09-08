@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"io/ioutil"
 	"log"
+	"fmt"
 )
 
 ///////////////////////////////////////////////////////
@@ -76,6 +77,23 @@ func IsStateString(state string) bool {
 // Checks that the token is non-nil and has not expired
 func IsTokenValid() bool {
 	return RCOauthToken.Valid()
+}
+
+func HandleRedirect(w http.ResponseWriter, r *http.Request) {
+	state := r.FormValue("state")
+    if ! IsStateString(state) {
+        fmt.Printf("invalid oauth state")
+        http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+        return
+	}
+	code := r.FormValue("code")
+	SetToken(code)
+	if ! IsTokenValid() {
+		fmt.Printf("invalid token")
+        http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+        return
+	}
+	http.Redirect(w, r, "/me", http.StatusTemporaryRedirect)
 }
 
 
