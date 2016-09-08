@@ -10,13 +10,13 @@ Getting Started
 ---------------
 
 ### Step 0:
-[Apply](https://www.recurse.com/apply/retreat) and get accepted to the [Recurse Center](https://www.recurse.com/). Done? Excellent.
+[Apply](https://www.recurse.com/apply/retreat) and get accepted to the [Recurse Center](https://www.recurse.com/). Done? Excellent!
 
 ### Step 1:
 Go to your [RC Settings page](https://www.recurse.com/settings/oauth), look in OAuth applications, and create a new application. You'll need to give it a name and redirect url (it can just be http://localhost:3000/recurse (with whatever port/extension you want) while you're testing.
 
 ### Step 2:
-This will give you back an ID and a Secret, take these (and you redirect url) and call rc_api.MakeConfig on them, like this:
+This will give you back an ID and a Secret, take these (and you redirect url) and call `rc_api.MakeConfig` on them, like this:
 
 ```Go
 MakeConfig(
@@ -35,13 +35,24 @@ After Step 3 recurse.com will redirect the user back to the redirect url you pro
 
 It might look like this:
 ```Go
-func handleRCCallback(w http.ResponseWriter, r *http.Request) {
+func handleRCRedirect(w http.ResponseWriter, r *http.Request) {
     code := r.FormValue("code")
     rc_api.SetToken(code)
 
     ...
 
     // Whatever you want to do next
+}
+```
+
+However, if you don't want to do anything in particular with the token, you really just want to set it inside the app and make api calls with it, then the package provides a default redirect handler that you can use, that sets the token and redirects the user again back the page of your choice. To use this you need to call `rc_api.SetPostAuthRedirect("url")` (the default is `"/"`), and pass `rc_api.HandleRedirect` to your handler function:
+
+```Go
+func main() {
+    ...
+	m.SetPostAuthRedirect("/me")
+    http.HandleFunc("/RCCallback", m.HandleRedirect)
+    ...
 }
 ```
 
