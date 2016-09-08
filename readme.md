@@ -10,10 +10,10 @@ Getting Started
 ---------------
 
 ### Step 0:
-[Apply](https://www.recurse.com/apply/retreat) and get accepted to the [Recurse Center](https://www.recurse.com/). Done? Exellent. 
+[Apply](https://www.recurse.com/apply/retreat) and get accepted to the [Recurse Center](https://www.recurse.com/). Done? Excellent.
 
 ### Step 1:
-Go to your [RC Settings page](https://www.recurse.com/settings/oauth), look in OAuth applications, and create a new application. You'll need to give it a name and redirect url (it can just be http://localhost:3000/recurse (with whatever port/extention you want) while you're testing.
+Go to your [RC Settings page](https://www.recurse.com/settings/oauth), look in OAuth applications, and create a new application. You'll need to give it a name and redirect url (it can just be http://localhost:3000/recurse (with whatever port/extension you want) while you're testing.
 
 ### Step 2:
 This will give you back an ID and a Secret, take these (and you redirect url) and call rc_api.MakeConfig on them, like this:
@@ -25,9 +25,9 @@ MakeConfig(
 		"Secret",
 	)
 ```
-You really don't want to expose these so it's probably best to save them as enviroment variables and use `os.Getenv("varName")` to retreve them.
+You really don't want to expose these so it's probably best to save them as environment variables and use `os.Getenv("varName")` to retrieve them.
 
-### Step 3: 
+### Step 3:
 In your app, make sure you have a route that redirects the user to the url provided by `rc_api.GetUrl()`. This sends them to a page on the RC website which asks them to log in (if they're not already), and then asks if they give your app permission to access their account.
 
 ### Step 4:
@@ -38,10 +38,10 @@ It might look like this:
 func handleRCCallback(w http.ResponseWriter, r *http.Request) {
     code := r.FormValue("code")
     rc_api.SetToken(code)
-    
+
     ...
-    
-    // Whatever you want to do next 
+
+    // Whatever you want to do next
 }
 ```
 
@@ -89,7 +89,7 @@ When I do it it looks like this:
 ```Go
 rc_api.GetRecurser("id")
 ```
-Gets a Recurser who you spesify by their id (given as a string) or their email address.
+Gets a Recurser who you specify by their id (given as a string) or their email address.
 
 (The `GetMe` function above is really just this one, but passing in "me" as the id.)
 
@@ -111,7 +111,7 @@ Gets the given batch as a, as specified by the batch ID for example if called wi
 ```Go
 rc_api.GetBatchMembers("id")
 ```
-Takes a batch id as a string and returns a list of every recurser in a given batch.
+Takes a batch id as a string and returns a list of every Recurser in a given batch.
 
 #### Get every batch
 ```Go
