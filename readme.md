@@ -1,6 +1,8 @@
 RC API Wrapper
 =================
 
+<a href='http://www.recurse.com' title='Made with love at the Recurse Center'><img src='https://cloud.githubusercontent.com/assets/2883345/11325206/336ea5f4-9150-11e5-9e90-d86ad31993d8.png' height='20px'/></a>
+
 A wrapper for the [Recurse Center API](https://github.com/recursecenter/wiki/wiki/Recurse-Center-API) written in Go. It can handle authenticating with OAuth2 and making requests.
 
 [Here's](https://gist.github.com/JKiely/267083e9fa776eb7d35c38fb8447e57c) an example app using it.
@@ -10,63 +12,84 @@ Getting Started
 ---------------
 
 ### Step 0:
-[Apply](https://www.recurse.com/apply/retreat) and get accepted to the [Recurse Center](https://www.recurse.com/). Done? Excellent!
+[Apply](https://www.recurse.com/apply/retreat) and get accepted to the [Recurse Center](https://www.recurse.com/). Done? Excellent.
 
 ### Step 1:
 Go to your [RC Settings page](https://www.recurse.com/settings/oauth), look in OAuth applications, and create a new application. You'll need to give it a name and redirect url (it can just be http://localhost:3000/recurse (with whatever port/extension you want) while you're testing.
 
 ### Step 2:
-This will give you back an ID and a Secret, take these (and you redirect url) and call `rc_api.MakeConfig` on them, like this:
+This will give you back an ID and a Secret, call `rc_api.MakeConfig` with these, and your redirect url in order to get a config object:
 
 ```Go
-MakeConfig(
+import (
+    //...
+	rc_api "github.com/JKiely/RC-API"
+    //...
+)
+
+
+var rcConfig = rc_api.MakeConfig(
 		"http://localhost:3000/recurse",
 		"ID",
-		"Secret",
-	)
+		"Secret")
 ```
-You really don't want to expose these so it's probably best to save them as environment variables and use `os.Getenv("varName")` to retrieve them.
 
 ### Step 3:
-In your app, make sure you have a route that redirects the user to the url provided by `rc_api.GetUrl()`. This sends them to a page on the RC website which asks them to log in (if they're not already), and then asks if they give your app permission to access their account.
+In your app, make sure you have a route that redirects the user to the url provided by you config object (`rcConfig.GetUrl()`). This sends them to a page on the RC website which asks them to log in (if they're not already), and then asks if they give your app permission to access their account.
 
 ### Step 4:
-After Step 3 recurse.com will redirect the user back to the redirect url you provided, so make sure you have a handler for that as well. It will also pass you a code as a param in the url, your handler will need to take this code and pass it to `rc_api.SetToken(code)`. This package will then use that code to authorize your application and get an authorization token that it will use when you make API requests.
+After Step 3 recurse.com will redirect the user back to the redirect url you provided, so make sure you have a handler for that as well. It will also pass you a code as a param in the url, your handler will need to take this code and use it to create an auth object by calling `rcConfig.MakeAuth(code)` with your config object. This package will then use that code to get an authorization token for your application and wrap it in an auth object.
 
 It might look like this:
 ```Go
 func handleRCRedirect(w http.ResponseWriter, r *http.Request) {
     code := r.FormValue("code")
-    rc_api.SetToken(code)
+    rcAuth = rcConfig.MakeAuth(code)
 
-    ...
+    //...
 
     // Whatever you want to do next
 }
 ```
 
-However, if you don't want to do anything in particular with the token, you really just want to set it inside the app and make api calls with it, then the package provides a default redirect handler that you can use, that sets the token and redirects the user again back the page of your choice. To use this you need to call `rc_api.SetPostAuthRedirect("url")` (the default is `"/"`), and pass `rc_api.HandleRedirect` to your handler function:
-
-```Go
-func main() {
-    ...
-	m.SetPostAuthRedirect("/me")
-    http.HandleFunc("/RCCallback", m.HandleRedirect)
-    ...
-}
-```
 
 Using the API
 -------------
 
-### Auth
+### Config
 
+The first thing you need to do is get a config object:
+
+```Go
+var config = rc_api.MakeConfig(
+		"http://localhost:3000/recurse",
+		"ID",
+		"Secret")
+```
+
+This wraps the [oauth2 config object](https://godoc.org/golang.org/x/oauth2#Config).
+
+#### Get URL
+```Go
+config.GetUrl()
+```
+
+This gives you the url which you need to redirect users to in order to authenticate. 
+
+#### Make Auth
+```Go
+var auth = config.MakeAuth(code)
+```
+
+Takes a code and hits RC's token endpoint in order to get a token object.
+
+Auth objects wrap the [oauth2 token object](https://godoc.org/golang.org/x/oauth2#Token) and adds methods for hitting the RC api.
 
 ### Recursers
 
 #### Get yourself
 ```Go
-rc_api.GetMe()
+auth.GetMe()
 ```
 Returns you! Or at least whoever is logged in. A json object containing all the details pertaining to you.
 
@@ -98,7 +121,7 @@ When I do it it looks like this:
 
 #### Get any Recurser
 ```Go
-rc_api.GetRecurser("id")
+auth.GetRecurser("id")
 ```
 Gets a Recurser who you specify by their id (given as a string) or their email address.
 
@@ -108,7 +131,7 @@ Gets a Recurser who you specify by their id (given as a string) or their email a
 
 #### Get a batch
 ```Go
-rc_api.GetBatch("id")
+auth.GetBatch("id")
 ```
 Gets the given batch as a, as specified by the batch ID for example if called with "28" it will return:
 ```
@@ -120,12 +143,12 @@ Gets the given batch as a, as specified by the batch ID for example if called wi
 
 #### Get Recursers from batch
 ```Go
-rc_api.GetBatchMembers("id")
+auth.GetBatchMembers("id")
 ```
 Takes a batch id as a string and returns a list of every Recurser in a given batch.
 
 #### Get every batch
 ```Go
-rc_api.GetBatchList()
+auth.GetBatchList()
 ```
 Returns a list of every batch.

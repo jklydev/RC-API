@@ -1,4 +1,4 @@
-package RC_Oauth
+package RC-API
 
 import (
 	"golang.org/x/oauth2"
@@ -24,8 +24,8 @@ func MakeConfig(url, id, secret string) *RCConfig {
 			AuthURL:  "https://recurse.com/oauth/authorize",
 			TokenURL: "https://recurse.com/oauth/token",
 		},
-		RedirectURL: url,
-		ClientID: id,
+		RedirectURL:  url,
+		ClientID:     id,
 		ClientSecret: secret,
 	}
 	rcConfig := &RCConfig{
@@ -34,7 +34,6 @@ func MakeConfig(url, id, secret string) *RCConfig {
 	}
 	return rcConfig
 }
-
 
 // Generates a random 20 char string, as per the protocol
 func getStateString(n int) string {
@@ -64,7 +63,6 @@ func (c *RCConfig) MakeAuth(code string) RCAuth {
 		genAccessParam(token.AccessToken)}
 	return t
 }
-
 
 ///////////////////////////////////////////////////////
 // Auth:
