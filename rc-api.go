@@ -1,4 +1,4 @@
-package RC-API
+package rc_api
 
 import (
 	"golang.org/x/oauth2"
@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"encoding/json"
 )
 
 ///////////////////////////////////////////////////////
@@ -82,12 +83,115 @@ func genAccessParam(token string) string {
 }
 
 ///////////////////////////////////////////////////////
+// Recurser
+///////////////////////////////////////////////////////
+
+// Get the details of the authed Recurser
+func (t *RCAuth) Me() Recurser {
+	me := t.Recurser("me")
+	return me
+}
+
+// Get any given Recurser
+// Takes ether a user ID or an email
+func (t *RCAuth) Recurser(id string) Recurser {
+	url := t.BaseUrl + t.RecurserPath + id + t.TokenParam
+	res := makeRequest(url)
+	recurser := Recurser{}
+	err := json.Unmarshal(res, &recurser)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return recurser
+}
+
+///////////////////////////////////////////////////////
+// Batch
+///////////////////////////////////////////////////////
+
+// Returns a list of every batch
+func (t *RCAuth) BatchList() []Batch {
+	url := t.BaseUrl + t.BatchPath + t.TokenParam
+	res := makeRequest(url)
+	var batchList []Batch
+	err := json.Unmarshal(res, &batchList)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return batchList
+}
+
+// Returns a particular batch
+// Takes a batch ID
+func (t *RCAuth) Batch(id string) Batch {
+	url := t.BaseUrl + t.BatchPath + id + t.TokenParam
+	res := makeRequest(url)
+	batch := Batch{}
+	err := json.Unmarshal(res, &batch)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return batch
+}
+
+// Returns the details of every member of a batch
+// Takes a batch ID
+func (t *RCAuth) BatchMembers(id string) []Recurser {
+	url := t.BaseUrl + t.BatchPath + id + "/people" + t.TokenParam
+	res := makeRequest(url)
+	var batchMembers []Recurser
+	err := json.Unmarshal(res, &batchMembers)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return batchMembers
+}
+
+///////////////////////////////////////////////////////
+// Return structs
+///////////////////////////////////////////////////////
+
+type Batch struct {
+	Id int
+	Name string
+	Start_date string
+	End_date string
+}
+
+type Recurser struct {
+	Id int
+	First_name string
+	Middle_name string
+	Last_name string
+	Email string
+	Twitter string
+	Github string
+	Batch_id int
+	Phone_number string
+	Has_photo bool
+	Interests string
+	Before_rc string
+	During_rc string
+	Is_faculty bool
+	Is_hacker_schooler bool
+	Job string
+	Image string
+	Batch Batch
+	Pseudonym string
+	Current_location string
+	Stints []Batch
+	Projects []string
+	Links []string
+	Skills []string
+	Bio string
+}
+
+///////////////////////////////////////////////////////
 // Request Utilities
 ///////////////////////////////////////////////////////
 
-// Makes a request and returns the result
-// Should probably be JSON instead of a string
-func makeRequest(url string) string {
+// Makes a request and returns result as bytes
+func makeRequest(url string) []byte {
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
@@ -97,56 +201,10 @@ func makeRequest(url string) string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	bodyS := string(body)
-	return bodyS
+	return body
 }
 
 // Checks if the state string passed back matches the one the user sent
 func (c *RCConfig) IsStateString(state string) bool {
 	return state == c.StateString
-}
-
-///////////////////////////////////////////////////////
-// Recurser
-///////////////////////////////////////////////////////
-
-// Get the details of the authed Recurser
-func (t *RCAuth) Me() string {
-	me := t.Recurser("me")
-	return me
-}
-
-// Get any given Recurser
-// Takes ether a user ID or an email
-func (t *RCAuth) Recurser(id string) string {
-	url := t.BaseUrl + t.RecurserPath + id + t.TokenParam
-	res := makeRequest(url)
-	return res
-}
-
-///////////////////////////////////////////////////////
-// Batch
-///////////////////////////////////////////////////////
-
-// Returns a list of every batch
-func (t *RCAuth) GetBatchList() string {
-	url := t.BaseUrl + t.BatchPath + t.TokenParam
-	res := makeRequest(url)
-	return res
-}
-
-// Returns a particular batch
-// Takes a batch ID
-func (t *RCAuth) GetBatch(id string) string {
-	url := t.BaseUrl + t.BatchPath + id + t.TokenParam
-	res := makeRequest(url)
-	return res
-}
-
-// Returns the details of every member of a batch
-// Takes a batch ID
-func (t *RCAuth) GetBatchMembers(id string) string {
-	url := t.BaseUrl + t.BatchPath + id + "/people" + t.TokenParam
-	res := makeRequest(url)
-	return res
 }
