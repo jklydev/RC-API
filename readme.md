@@ -89,66 +89,74 @@ Auth objects wrap the [oauth2 token object](https://godoc.org/golang.org/x/oauth
 
 #### Get yourself
 ```Go
-auth.GetMe()
+auth.Me()
 ```
-Returns you! Or at least whoever is logged in. A json object containing all the details pertaining to you.
+Returns you! Or at least whoever is logged in. A struct containing all the details pertaining to you.
 
-When I do it it looks like this:
+It contains the following fields:
+```Go
+type Recurser struct {
+	Id                 int
+	First_name         string
+	Middle_name        string
+	Last_name          string
+	Email              string
+	Twitter            string
+	Github             string
+	Batch_id           int
+	Phone_number       string
+	Has_photo          bool
+	Interests          string
+	Before_rc          string
+	During_rc          string
+	Is_faculty         bool
+	Is_hacker_schooler bool
+	Job                string
+	Image              string
+	Batch              Batch
+	Pseudonym          string
+	Current_location   string
+	Stints             []Batch
+	Projects           []string
+	Links              []string
+	Skills             []string
+	Bio                string
+}
 ```
-{"id":1786,
-"first_name":"John",
-"middle_name":"",
-"last_name":"Kiely",
-"email":"jjkiely@gmail.com",
-"twitter":null,
-"github":"JKiely",
-"batch_id":28,
-"phone_number":"13476367122",
-"has_photo":true,
-"interests":null,
-"before_rc":null,
-"during_rc":null,
-"is_faculty":false,
-"is_hacker_schooler":true,
-"job":null,
-"image":"https://d29xw0ra2h4o4u.cloudfront.net/assets/people/john_kiely_150-fe5be2ceba10783d19ad16dd2511c2a118a66258926a367a2a6a40811b8b4729.jpg",
-"batch":{"id":28,"name":"Summer 2, 2016","start_date":"2016-07-05","end_date":"2016-09-22"},
-"pseudonym":"Pvc Drop",
-"current_location":null,
-"stints":[{"batch_id":28,"start_date":"2016-07-05","end_date":"2016-09-22"}],
-"projects":[],"links":[],"skills":[],"bio":null}
-```
+Though the final four are [depreciated](https://github.com/recursecenter/wiki/wiki/Recurse-Center-API#people) and will be `nil` for all more recent Recursers.
 
 #### Get any Recurser
 ```Go
-auth.GetRecurser("id")
+auth.Recurser("id")
 ```
 Gets a Recurser who you specify by their id (given as a string) or their email address.
 
-(The `GetMe` function above is really just this one, but passing in "me" as the id.)
+(The `Me` function above is really just this one, but passing in "me" as the id.)
 
 ### Batches
 
 #### Get a batch
 ```Go
-auth.GetBatch("id")
+auth.Batch("id")
 ```
-Gets the given batch as a, as specified by the batch ID for example if called with "28" it will return:
-```
-{"id":28,
-"name":"Summer 2, 2016",
-"start_date":"2016-07-05",
-"end_date":"2016-09-22"}
+Gets the given batch, as specified by the batch ID. Contains the following fields:
+```Go
+type Batch struct {
+	Id         int
+	Name       string
+	Start_date string
+	End_date   string
+}
 ```
 
 #### Get Recursers from batch
 ```Go
-auth.GetBatchMembers("id")
+auth.BatchMembers("id")
 ```
 Takes a batch id as a string and returns a list of every Recurser in a given batch.
 
 #### Get every batch
 ```Go
-auth.GetBatchList()
+auth.BatchList()
 ```
 Returns a list of every batch.
