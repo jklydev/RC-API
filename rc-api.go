@@ -2,7 +2,7 @@ package rc_api
 
 import (
 	"golang.org/x/oauth2"
-	"log"
+	"fmt"
 	"math/rand"
 )
 
@@ -51,7 +51,7 @@ func (c *RCConfig) GetUrl() string {
 func (c *RCConfig) MakeAuth(code string) RCAuth {
 	token, err := c.Exchange(oauth2.NoContext, code)
 	if err != nil {
-		log.Fatal(token)
+		fmt.Println(err)
 	}
 	t := RCAuth{token,
 		"https://www.recurse.com/api/v1/",

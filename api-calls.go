@@ -3,7 +3,7 @@ package rc_api
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
+	"fmt"
 	"net/http"
 )
 
@@ -18,7 +18,7 @@ func (t *RCAuth) Recurser(id string) Recurser {
 	recurser := Recurser{}
 	err := json.Unmarshal(res, &recurser)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 	return recurser
 }
@@ -29,7 +29,7 @@ func (t *RCAuth) BatchList() []Batch {
 	var batchList []Batch
 	err := json.Unmarshal(res, &batchList)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 	return batchList
 }
@@ -40,7 +40,7 @@ func (t *RCAuth) Batch(id string) Batch {
 	batch := Batch{}
 	err := json.Unmarshal(res, &batch)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 	return batch
 }
@@ -51,7 +51,7 @@ func (t *RCAuth) BatchMembers(id string) []Recurser {
 	var batchMembers []Recurser
 	err := json.Unmarshal(res, &batchMembers)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 	return batchMembers
 }
@@ -59,12 +59,12 @@ func (t *RCAuth) BatchMembers(id string) []Recurser {
 func makeRequest(url string) []byte {
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 	return body
 }
