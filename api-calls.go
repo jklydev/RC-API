@@ -7,12 +7,12 @@ import (
 	"net/http"
 )
 
-func (t *RCAuth) Me() Recurser {
+func (t *Auth) Me() Recurser {
 	me := t.Recurser("me")
 	return me
 }
 
-func (t *RCAuth) Recurser(id string) Recurser {
+func (t *Auth) Recurser(id string) Recurser {
 	url := t.BaseUrl + t.RecurserPath + id + t.TokenParam
 	res := makeRequest(url)
 	recurser := Recurser{}
@@ -23,7 +23,7 @@ func (t *RCAuth) Recurser(id string) Recurser {
 	return recurser
 }
 
-func (t *RCAuth) BatchList() []Batch {
+func (t *Auth) BatchList() []Batch {
 	url := t.BaseUrl + t.BatchPath + t.TokenParam
 	res := makeRequest(url)
 	var batchList []Batch
@@ -34,7 +34,7 @@ func (t *RCAuth) BatchList() []Batch {
 	return batchList
 }
 
-func (t *RCAuth) Batch(id string) Batch {
+func (t *Auth) Batch(id string) Batch {
 	url := t.BaseUrl + t.BatchPath + id + t.TokenParam
 	res := makeRequest(url)
 	batch := Batch{}
@@ -45,7 +45,7 @@ func (t *RCAuth) Batch(id string) Batch {
 	return batch
 }
 
-func (t *RCAuth) BatchMembers(id string) []Recurser {
+func (t *Auth) BatchMembers(id string) []Recurser {
 	url := t.BaseUrl + t.BatchPath + id + "/people" + t.TokenParam
 	res := makeRequest(url)
 	var batchMembers []Recurser

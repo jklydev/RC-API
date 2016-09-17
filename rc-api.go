@@ -6,12 +6,12 @@ import (
 	"math/rand"
 )
 
-type RCConfig struct {
+type Config struct {
 	*oauth2.Config
 	StateString string
 }
 
-func MakeConfig(url, id, secret string) *RCConfig {
+func MakeConfig(url, id, secret string) *Config {
 	c := &oauth2.Config{
 		Scopes: []string{"public"},
 		Endpoint: oauth2.Endpoint{
@@ -22,7 +22,7 @@ func MakeConfig(url, id, secret string) *RCConfig {
 		ClientID:     id,
 		ClientSecret: secret,
 	}
-	rcConfig := &RCConfig{
+	rcConfig := &Config{
 		c,
 		getStateString(20),
 	}
@@ -38,22 +38,22 @@ func getStateString(n int) string {
 	return string(randString)
 }
 
-func (c *RCConfig) IsStateString(state string) bool {
+func (c *Config) IsStateString(state string) bool {
 	return state == c.StateString
 }
 
 // Generates the URL on which use user can give consent for the app to use their RC data
-func (c *RCConfig) GetUrl() string {
+func (c *Config) GetUrl() string {
 	url := c.AuthCodeURL(c.StateString)
 	return url
 }
 
-func (c *RCConfig) MakeAuth(code string) RCAuth {
+func (c *Config) MakeAuth(code string) Auth {
 	token, err := c.Exchange(oauth2.NoContext, code)
 	if err != nil {
 		fmt.Println(err)
 	}
-	t := RCAuth{token,
+	t := Auth{token,
 		"https://www.recurse.com/api/v1/",
 		"people/",
 		"batches/",
@@ -61,7 +61,7 @@ func (c *RCConfig) MakeAuth(code string) RCAuth {
 	return t
 }
 
-type RCAuth struct {
+type Auth struct {
 	*oauth2.Token
 	BaseUrl      string
 	RecurserPath string
