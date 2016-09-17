@@ -28,23 +28,23 @@ import (
 )
 
 
-var rcConfig = rc_api.MakeConfig(
+var config = rc_api.MakeConfig(
 		"http://localhost:3000/recurse",
 		"ID",
 		"Secret")
 ```
 
 ### Step 3:
-In your app, make sure you have a route that redirects the user to the url provided by you config object (`rcConfig.GetUrl()`). This sends them to a page on the RC website which asks them to log in (if they're not already), and then asks if they give your app permission to access their account.
+In your app, make sure you have a route that redirects the user to the url provided by you config object (`config.GetUrl()`). This sends them to a page on the RC website which asks them to log in (if they're not already), and then asks if they give your app permission to access their account.
 
 ### Step 4:
-After Step 3 recurse.com will redirect the user back to the redirect url you provided, so make sure you have a handler for that as well. It will also pass you a code as a param in the url, your handler will need to take this code and use it to create an auth object by calling `rcConfig.MakeAuth(code)` with your config object. This package will then use that code to get an authorization token for your application and wrap it in an auth object.
+After Step 3 recurse.com will redirect the user back to the redirect url you provided, so make sure you have a handler for that as well. It will also pass you a code as a param in the url, your handler will need to take this code and use it to create an auth object by calling `config.MakeAuth(code)` with your config object. This package will then use that code to get an authorization token for your application and wrap it in an auth object.
 
 It might look like this:
 ```Go
 func handleRCRedirect(w http.ResponseWriter, r *http.Request) {
     code := r.FormValue("code")
-    rcAuth = rcConfig.MakeAuth(code)
+    auth = config.MakeAuth(code)
 
     //...
 
