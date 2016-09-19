@@ -3,12 +3,10 @@ package rc_api
 import (
 	"golang.org/x/oauth2"
 	"fmt"
-	"math/rand"
 )
 
 type Config struct {
 	*oauth2.Config
-	StateString string
 }
 
 func MakeConfig(url, id, secret string) *Config {
@@ -24,27 +22,13 @@ func MakeConfig(url, id, secret string) *Config {
 	}
 	rcConfig := &Config{
 		c,
-		getStateString(20),
 	}
 	return rcConfig
 }
 
-func getStateString(n int) string {
-	var chars = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-	randString := make([]rune, n)
-	for i := range randString {
-		randString[i] = chars[rand.Intn(len(chars))]
-	}
-	return string(randString)
-}
-
-func (c *Config) IsStateString(state string) bool {
-	return state == c.StateString
-}
-
 // Generates the URL on which use user can give consent for the app to use their RC data
-func (c *Config) GetUrl() string {
-	url := c.AuthCodeURL(c.StateString)
+func (c *Config) GetUrl(state string) string {
+	url := c.AuthCodeURL(state)
 	return url
 }
 
