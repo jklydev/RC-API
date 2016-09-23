@@ -71,10 +71,10 @@ This wraps the [oauth2 config object](https://godoc.org/golang.org/x/oauth2#Conf
 
 #### Get URL
 ```Go
-config.GetUrl()
+config.GetUrl("state")
 ```
 
-This gives you the url which you need to redirect users to in order to authenticate. 
+This gives you the url which you need to redirect users to in order to authenticate. You need to pass it a state string that it will give back to you after the redirect. This is to project against [Cross-Site Request Forgery](https://tools.ietf.org/html/rfc6749#section-10.12).
 
 #### Make Auth
 ```Go
@@ -122,6 +122,20 @@ type Recurser struct {
 	Skills             []string
 	Bio                string
 }
+
+type Stint struct {
+	Id         int
+	Start_date string
+	End_date   string
+	Type       string
+}
+
+type Location struct {
+	Geoname_id int
+	Name       string
+	Short_name string
+	Ascii_name string
+
 ```
 Though the final four are [depreciated](https://github.com/recursecenter/wiki/wiki/Recurse-Center-API#people) and will be `nil` for all more recent Recursers.
 
