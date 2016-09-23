@@ -115,8 +115,8 @@ type Recurser struct {
 	Image              string
 	Batch              Batch
 	Pseudonym          string
-	Current_location   string
-	Stints             []Batch
+	Current_location   Location
+	Stints             []Stint
 	Projects           []string
 	Links              []string
 	Skills             []string

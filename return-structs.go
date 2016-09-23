@@ -7,6 +7,20 @@ type Batch struct {
 	End_date   string
 }
 
+type Stint struct {
+	Id         int
+	Start_date string
+	End_date   string
+	Type       string
+}
+
+type Location struct {
+	Geoname_id int
+	Name       string
+	Short_name string
+	Ascii_name string
+}
+
 type Recurser struct {
 	Id                 int
 	First_name         string
@@ -27,8 +41,8 @@ type Recurser struct {
 	Image              string
 	Batch              Batch
 	Pseudonym          string
-	Current_location   string
-	Stints             []Batch
+	Current_location   Location
+	Stints             []Stint
 	Projects           []string
 	Links              []string
 	Skills             []string

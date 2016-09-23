@@ -1,8 +1,8 @@
 package rc_api
 
 import (
-	"golang.org/x/oauth2"
 	"fmt"
+	"golang.org/x/oauth2"
 )
 
 type Config struct {

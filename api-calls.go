@@ -2,8 +2,8 @@ package rc_api
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 )
 
