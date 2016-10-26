@@ -1,14 +1,17 @@
-package rc_api
+package rcAPI
 
 import (
 	"fmt"
+
 	"golang.org/x/oauth2"
 )
 
+// Config is a wrapper around the oauth2 config struct
 type Config struct {
 	*oauth2.Config
 }
 
+// MakeConfig generates the config object that is used to authenticate the user
 func MakeConfig(url, id, secret string) *Config {
 	c := &oauth2.Config{
 		Scopes: []string{"public"},
@@ -26,12 +29,13 @@ func MakeConfig(url, id, secret string) *Config {
 	return rcConfig
 }
 
-// Generates the URL on which use user can give consent for the app to use their RC data
-func (c *Config) GetUrl(state string) string {
+// GetURL generates the URL on which use user can give consent for the app to use their RC data
+func (c *Config) GetURL(state string) string {
 	url := c.AuthCodeURL(state)
 	return url
 }
 
+// MakeAuth generates the auth object that is used to make requests to the api
 func (c *Config) MakeAuth(code string) Auth {
 	token, err := c.Exchange(oauth2.NoContext, code)
 	if err != nil {
@@ -45,9 +49,10 @@ func (c *Config) MakeAuth(code string) Auth {
 	return t
 }
 
+// Auth wraps the oauth2 token struct and adds aditional feilds to make requesting easier
 type Auth struct {
 	*oauth2.Token
-	BaseUrl      string
+	BaseURL      string
 	RecurserPath string
 	BatchPath    string
 	TokenParam   string

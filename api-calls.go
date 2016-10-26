@@ -1,4 +1,4 @@
-package rc_api
+package rcAPI
 
 import (
 	"encoding/json"
@@ -7,13 +7,15 @@ import (
 	"net/http"
 )
 
+// Me returns the currently logged in recurser
 func (t *Auth) Me() Recurser {
 	me := t.Recurser("me")
 	return me
 }
 
+// Recurser returns any recurser given their email address or id number
 func (t *Auth) Recurser(id string) Recurser {
-	url := t.BaseUrl + t.RecurserPath + id + t.TokenParam
+	url := t.BaseURL + t.RecurserPath + id + t.TokenParam
 	res := makeRequest(url)
 	recurser := Recurser{}
 	err := json.Unmarshal(res, &recurser)
@@ -23,8 +25,9 @@ func (t *Auth) Recurser(id string) Recurser {
 	return recurser
 }
 
+// Batchlist returns a list of all the batches
 func (t *Auth) BatchList() []Batch {
-	url := t.BaseUrl + t.BatchPath + t.TokenParam
+	url := t.BaseURL + t.BatchPath + t.TokenParam
 	res := makeRequest(url)
 	var batchList []Batch
 	err := json.Unmarshal(res, &batchList)
@@ -34,8 +37,9 @@ func (t *Auth) BatchList() []Batch {
 	return batchList
 }
 
+// Batch returns the current batch
 func (t *Auth) Batch(id string) Batch {
-	url := t.BaseUrl + t.BatchPath + id + t.TokenParam
+	url := t.BaseURL + t.BatchPath + id + t.TokenParam
 	res := makeRequest(url)
 	batch := Batch{}
 	err := json.Unmarshal(res, &batch)
@@ -45,8 +49,9 @@ func (t *Auth) Batch(id string) Batch {
 	return batch
 }
 
+// BatchMembers returns a list of the members of a given batch
 func (t *Auth) BatchMembers(id string) []Recurser {
-	url := t.BaseUrl + t.BatchPath + id + "/people" + t.TokenParam
+	url := t.BaseURL + t.BatchPath + id + "/people" + t.TokenParam
 	res := makeRequest(url)
 	var batchMembers []Recurser
 	err := json.Unmarshal(res, &batchMembers)

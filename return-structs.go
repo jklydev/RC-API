@@ -1,4 +1,4 @@
-package rc_api
+package rcAPI
 
 type Batch struct {
 	Id         int

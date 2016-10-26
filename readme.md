@@ -3,6 +3,8 @@ RC API Wrapper
 
 <a href='http://www.recurse.com' title='Made with love at the Recurse Center'><img src='https://cloud.githubusercontent.com/assets/2883345/11325206/336ea5f4-9150-11e5-9e90-d86ad31993d8.png' height='20px'/></a>
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/JKiely/RC-API)](https://goreportcard.com/report/github.com/JKiely/RC-API)
+
 A wrapper for the [Recurse Center API](https://github.com/recursecenter/wiki/wiki/Recurse-Center-API) written in Go. It can handle authenticating with OAuth2 and making requests.
 
 [Here's](https://gist.github.com/JKiely/267083e9fa776eb7d35c38fb8447e57c) an example app using it.
